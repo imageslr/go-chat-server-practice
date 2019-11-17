@@ -26,14 +26,17 @@ var (
 	UnknownCommand = errors.New("Unknown command")
 )
 
+// 客户端向服务端上发的命令
 type SendCommand struct {
 	Message string
 }
 
+// 客户端向服务端上发的命令
 type NameCommand struct {
 	Name string
 }
 
+// 服务端向客户端下发的命令
 type MessageCommand struct {
 	Name    string
 	Message string
