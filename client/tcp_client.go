@@ -2,6 +2,8 @@ package client
 
 import (
 	"go-chat-server-practice/protocol"
+	"io"
+	"log"
 	"net"
 )
 
@@ -22,13 +24,36 @@ func NewClient() *TcpChatClient {
 
 // 连接到服务端。这里需要做一些初始化的工作
 func (c *TcpChatClient) Dial(address string) error {
-	// TODO
+	conn, err := net.Dial("tcp", address)
+	if err != nil {
+		return err
+	}
+
+	c.conn = conn
+	c.cmdReader = protocol.NewCommandReader(conn)
+	c.cmdWriter = protocol.NewCommandWriter(conn)
+
 	return nil
 }
 
 // 获取服务端发来的命令，执行相应的操作
 func (c *TcpChatClient) Start() {
-	// TODO
+	for {
+		cmd, err := c.cmdReader.Read()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			log.Printf("Read error %v", err)
+		}
+
+		switch v := cmd.(type) {
+		case protocol.MessageCommand:
+			c.incoming <- v
+		default:
+			log.Printf("Unknown command: %v", v)
+		}
+	}
 }
 
 // 简单地关闭连接
