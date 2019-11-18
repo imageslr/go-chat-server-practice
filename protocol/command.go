@@ -1,4 +1,8 @@
 /**
+最新修改可以使用 gob 直接传输结构体，不需要再手动解析字符串
+*/
+
+/**
 客户端与服务端通过 TCP 传输的是字符串，因此需要规定一个将字符串解析为命令的协议。
 
 一条命令的格式如下所示：
@@ -25,6 +29,13 @@ import "errors"
 var (
 	UnknownCommand = errors.New("Unknown command")
 )
+
+// gob 结构体
+type Command struct {
+	Type    string // SEND | NAME | MESSAGE
+	Message string
+	Name    string
+}
 
 // 客户端向服务端上发的命令
 type SendCommand struct {
